@@ -1,0 +1,33 @@
+services:
+  open-webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}
+    container_name: open-webui
+    volumes:
+      - open-webui:/app/backend/data
+    ports:
+      - ${OPEN_WEBUI_PORT-3000}:8080
+    environment:
+      # Disable Ollama
+      - ENABLE_OLLAMA_API=False
+      # Claude/Anthropic API Configuration
+      - OPENAI_API_BASE_URL=${OPENAI_API_BASE_URL:-https://api.anthropic.com/v1}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      # Gemini API Configuration
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_API_BASE_URL=${GEMINI_API_BASE_URL:-https://generativelanguage.googleapis.com/v1beta}
+      # WebUI Configuration
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-}
+      - ENABLE_SIGNUP=${ENABLE_SIGNUP:-True}
+      - CORS_ALLOW_ORIGIN=${CORS_ALLOW_ORIGIN:-*}
+      - FORWARDED_ALLOW_IPS=${FORWARDED_ALLOW_IPS:-*}
+      # Analytics
+      - SCARF_NO_ANALYTICS=true
+      - DO_NOT_TRACK=true
+      - ANONYMIZED_TELEMETRY=false
+    restart: unless-stopped
+
+volumes:
+  open-webui: {}
